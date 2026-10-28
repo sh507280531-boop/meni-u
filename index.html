@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mazza Restoran — Menyu</title>
+<style>
+:root{--bg:#fff8f0;--fg:#2b1d12;--card:#fff;--mut:#8a7563;--ac:#e8590c;--ac2:#f59f00;--bd:#f1e0cf;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#16100b;--fg:#fbefe2;--card:#241a12;--mut:#b09a86;--bd:#3a2b1d;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--bd);box-shadow:0 4px 20px rgba(232,89,12,.12)}
+.top{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.logo{font-size:24px;font-weight:900;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+#q{flex:1;min-width:200px;max-width:380px;padding:11px 16px;border-radius:30px;border:2px solid var(--bd);background:var(--bg);color:var(--fg);font:inherit;outline:0}
+#q:focus{border-color:var(--ac)}
+nav{max-width:1100px;margin:0 auto;padding:0 16px 12px;display:flex;gap:8px;overflow-x:auto}
+nav button{white-space:nowrap;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:20px;padding:8px 16px;cursor:pointer;font:inherit;font-weight:600}
+nav button.a{background:linear-gradient(90deg,var(--ac),var(--ac2));color:#fff;border-color:transparent}
+.hero{max-width:1100px;margin:22px auto 0;padding:34px 20px;border-radius:24px;color:#fff;background:linear-gradient(120deg,var(--ac),var(--ac2));text-align:center}
+.hero h1{margin:0 0 6px;font-size:clamp(26px,5vw,42px)}.hero p{margin:0;opacity:.92}
+main{max-width:1100px;margin:0 auto;padding:22px 16px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.f{background:var(--card);border:1px solid var(--bd);border-radius:20px;overflow:hidden;transition:.25s}
+.f:hover{transform:translateY(-6px);box-shadow:0 16px 36px rgba(232,89,12,.22)}
+.im{height:170px;background:var(--bd);display:flex;align-items:center;justify-content:center;font-size:70px;overflow:hidden}
+.im img{width:100%;height:100%;object-fit:cover;transition:.4s}.f:hover img{transform:scale(1.08)}
+.in{padding:12px 14px 16px}
+.mt{display:flex;justify-content:space-between;color:var(--mut);font-size:14px}
+.pr{color:var(--ac);font-weight:800}
+.nm{font-size:18px;font-weight:700;margin-top:6px}
+.em{grid-column:1/-1;text-align:center;color:var(--mut);padding:40px}
+/* admin */
+#ad{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;padding:14px;z-index:50}
+#ad.o{display:flex}
+.pn{background:var(--card);border-radius:22px;padding:20px;width:min(520px,100%);max-height:92vh;overflow:auto;border:1px solid var(--bd)}
+.pn h2{margin:0 0 12px;display:flex;justify-content:space-between;align-items:center}
+.pn input,.pn select{width:100%;margin-bottom:10px;padding:11px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--fg);font:inherit}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{width:100%;padding:12px;border:0;border-radius:12px;background:linear-gradient(90deg,var(--ac),var(--ac2));color:#fff;font:inherit;font-weight:800;cursor:pointer}
+.x{width:auto;padding:6px 12px;background:var(--bd);color:var(--fg)}
+#pv{max-height:110px;border-radius:10px;margin-bottom:10px;display:none}
+.li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--bd);font-size:14px}
+.li button{background:#ef4444;color:#fff;border:0;border-radius:8px;padding:5px 10px;cursor:pointer}
+</style></head><body>
+<header>
+ <div class="top"><div class="logo">🍽️ Mazza Restoran</div><input id="q" placeholder="🔍 Ovqat qidirish…" autocomplete="off"></div>
+ <nav id="nv"></nav>
+</header>
+<div class="hero"><h1>Menyu</h1><p>Eng mazali taomlar — sizning dasturxoningiz uchun</p></div>
+<main id="gr"></main>
+
+<div id="ad"><div class="pn">
+ <h2>⚙️ Admin panel <button class="btn x" onclick="closeA()">✕</button></h2>
+ <input id="an" placeholder="Ovqat nomi">
+ <div class="r2"><input id="ag" type="number" placeholder="Grammi (masalan 350)"><input id="ap" type="number" placeholder="Narxi (soʻm)"></div>
+ <select id="ac"></select>
+ <input id="af" type="file" accept="image/*">
+ <img id="pv" alt="">
+ <button class="btn" onclick="addFood()">➕ Qoʻshish</button>
+ <h3>Qoʻshilgan ovqatlar</h3><div id="ls"></div>
+</div></div>
+
+<script>
+const KEY='menyu_v1',CATS=['Taomlar','Salatlar','Ichimliklar','Shirinliklar'];
+const DEF=[
+{n:'Palov',g:400,p:45000,c:'Taomlar',e:'🍛'},{n:'Lagʻmon',g:450,p:38000,c:'Taomlar',e:'🍜'},
+{n:'Shashlik',g:250,p:30000,c:'Taomlar',e:'🍢'},{n:'Burger',g:300,p:35000,c:'Taomlar',e:'🍔'},
+{n:'Pitsa',g:600,p:70000,c:'Taomlar',e:'🍕'},{n:'Sezar salat',g:220,p:32000,c:'Salatlar',e:'🥗'},
+{n:'Limonad',g:400,p:15000,c:'Ichimliklar',e:'🍋'},{n:'Choy',g:500,p:8000,c:'Ichimliklar',e:'🍵'},
+{n:'Tort',g:150,p:25000,c:'Shirinliklar',e:'🍰'},{n:'Muzqaymoq',g:120,p:12000,c:'Shirinliklar',e:'🍨'}];
+let D,cat='Hammasi',img='';
+try{D=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!Array.isArray(D))D=DEF.map((x,i)=>({...x,id:i+1}));
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(D));return 1}catch(e){alert('Xotira toʻldi! Kichikroq rasm tanlang.');return 0}};
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>Number(n).toLocaleString('ru-RU')+' soʻm';
+function nav(){$('#nv').innerHTML=['Hammasi',...CATS].map(c=>`<button class="${c==cat?'a':''}" onclick="cat='${c}';nav();show()">${c}</button>`).join('');$('#ac').innerHTML=CATS.map(c=>`<option>${c}</option>`).join('')}
+function show(){
+ const k=$('#q').value.trim().toLowerCase();
+ const L=D.filter(x=>(cat=='Hammasi'||x.c==cat)&&x.n.toLowerCase().includes(k));
+ $('#gr').innerHTML=L.length?L.map(x=>`<div class="f"><div class="im">${x.i?`<img src="${x.i}" alt="${esc(x.n)}">`:x.e||'🍽️'}</div><div class="in"><div class="mt"><span>${x.g} gr</span><span class="pr">${fmt(x.p)}</span></div><div class="nm">${esc(x.n)}</div></div></div>`).join(''):'<div class="em">😕 Hech narsa topilmadi</div>';
+}
+function lst(){$('#ls').innerHTML=D.map(x=>`<div class="li"><span>${esc(x.n)} · ${x.g}gr · ${fmt(x.p)}</span><button onclick="del(${x.id})">🗑</button></div>`).join('')}
+$('#q').addEventListener('input',()=>{if($('#q').value.trim()==='2012'){$('#q').value='';openA()}show()});
+function openA(){lst();$('#ad').classList.add('o')}
+function closeA(){$('#ad').classList.remove('o')}
+$('#ad').onclick=e=>{if(e.target.id=='ad')closeA()};
+$('#af').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const m=600,s=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);img=c.toDataURL('image/jpeg',.75);$('#pv').src=img;$('#pv').style.display='block'};im.src=r.result};r.readAsDataURL(f)};
+function addFood(){
+ const n=$('#an').value.trim(),g=+$('#ag').value,p=+$('#ap').value;
+ if(!n||!g||!p){alert('Nomi, grammi va narxini kiriting!');return}
+ D.unshift({id:Date.now(),n,g,p,c:$('#ac').value,i:img});
+ if(!save()){D.shift();return}
+ $('#an').value=$('#ag').value=$('#ap').value=$('#af').value='';img='';$('#pv').style.display='none';
+ lst();show();
+}
+function del(id){if(!confirm('Oʻchirilsinmi?'))return;D=D.filter(x=>x.id!=id);save();lst();show()}
+nav();show();
+</script></body></html>
